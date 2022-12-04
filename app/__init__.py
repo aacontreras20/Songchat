@@ -10,8 +10,8 @@ app = Flask(__name__)
 
 #load in key
 with open("gitignore.txt", "r") as keyfile:
-    cid = keyfile.readline()
-    secret = keyfile.readline()
+    cid = keyfile.readline().strip()
+    secret = keyfile.readline().strip()
 
 
 client_credentials_manager = SpotifyClientCredentials(client_id=cid, client_secret=secret)
@@ -27,21 +27,20 @@ Session(app)
 
 
 
+results = sp.search(q='track:' + name, type='track')
+
+items = results['tracks']['items']
+
+if len(items) > 0:
+    track = items[0]
+    url = track['album']['images'][0]['url']
+
+print(url)
+
+
 @app.route('/')
 def home():
-    #song = sp.search(q = "hello", type = "track")
-    
-
-    name = 'Radiohead'
-
-    results = sp.search(q='artist:' + name, type='artist')
-    items = results['artists']['items']
-
-    if len(items) > 0:
-        artist = items[0]
-        url = artist['name'], artist['images'][0]['url']
-
-    return render_template("template.html", url = url)
+    return render_template("template.html")
 
 
 
