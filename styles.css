@@ -3,9 +3,10 @@
     border-spacing: 1em 0;
 }
 
-body{
-    background: linear-gradient(to right,#000,#2e944b);
-    }
+body {
+    background: rgb(25,20,20);
+    background: linear-gradient(90deg, rgba(25,20,20,1) 0%, rgba(29,185,84,1) 100%);
+}
 
 /* Size for brand */
 nav .navbar-brand

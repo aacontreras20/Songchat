@@ -14,14 +14,13 @@
         <!-- https://favicon.io/emoji-favicons/money-bag/ -->
         <link href="/static/favicon.ico" rel="icon">
 
-        <link href="/static/styles.css" rel="stylesheet">
+        <link rel="stylesheet" href="styles.css">
 
         <title>Songchat {% block title %}{% endblock %}</title>
 
     </head>
 
     <body>
-
         <nav class="bg-light border navbar navbar-expand-md navbar-light">
             <div class="container-fluid">
                 <a class="navbar-brand" href="/"><span class="green">Songchat</span></a>
@@ -54,15 +53,16 @@
                 </div>
             </header>
         {% endif %}
-
+        <div class="body">
         <main class="container-fluid py-5 text-center">
             {% block main %}{% endblock %}
         </main>
 
         <footer class="mb-5 small text-center text-muted">
+            <div class=body></div>
             Data provided by <a href="https://developer.spotify.com/documentation/web-api/">Spotify API</a>
         </footer>
-
+        </div>
     </body>
 
 </html>
