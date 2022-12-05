@@ -1,0 +1,43 @@
+{% extends "template.html" %}
+
+{% block title %}
+    Home
+{% endblock %}
+
+{% block main %}
+<head>
+    <title>
+      Songchat Fade-In
+    </title>
+    <script type="text/javascript">
+        var opacity = 0;
+        var intervalID = 0;
+        window.onload = fadeIn;
+  
+        function fadeIn() {
+            setInterval(show, 50);
+        }
+  
+        function show() {
+            var body = document.getElementById("body");
+            opacity = Number(window.getComputedStyle(body)
+                             .getPropertyValue("opacity"));
+            if (opacity < 1) {
+                opacity = opacity + 0.05;
+                body.style.opacity = opacity
+            } else {
+                clearInterval(intervalID);
+            }
+        }
+    </script>
+</head>
+<body id="body" style="opacity: 0;">
+    <br>
+    <div class="titletext" class="spot_black">
+    <p> Songchat </p>
+    </div>
+    <b> 
+      Head to the feed and get chatting! 
+    </b>
+{% endblock %}
+

@@ -69,7 +69,7 @@ def register():
 
         db.execute("INSERT INTO users (username, spotify, hash) VALUES(?,?, ?)", username, spotify ,hash)
 
-        return redirect("/")
+        return redirect("/login")
     else:
         return render_template("register.html")
 
@@ -103,7 +103,7 @@ def login():
         print(session["user_id"])
 
         # Redirect user to home page
-        return redirect("/")
+        return redirect("/home.html")
 
     # User reached route via GET (as by clicking a link or via redirect)
     else:
@@ -111,7 +111,7 @@ def login():
 
 @app.route('/')
 def home():
-    return render_template("template.html")
+    return render_template("home.html")
 
 @app.route('/profile')
 def profile():
@@ -134,7 +134,7 @@ def post():
 
         db.execute("INSERT INTO posts (user_id, song, content) VALUES(?,?,?)", session["user_id"], name , content)
 
-        return redirect("/")
+        return redirect("/home.html")
     else:
         return render_template("post.html")
 
@@ -171,7 +171,7 @@ def logout():
     session.clear()
 
     # Redirect user to login form
-    return redirect("/")
+    return redirect("/login")
 
 if __name__ == "__main__": #false if this file imported as module
     #enable debugging, auto-restarting of server when this file is modified
