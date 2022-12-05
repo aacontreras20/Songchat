@@ -16,6 +16,7 @@ with open("gitignore.txt", "r") as keyfile:
     cid = keyfile.readline().strip()
     secret = keyfile.readline().strip()
 
+db = SQL("sqlite:///songchat.db")
 
 
 client_credentials_manager = SpotifyClientCredentials(client_id=cid, client_secret=secret)
@@ -62,8 +63,8 @@ def register():
         if len(rows1) != 0:
             return apology("username taken")
 
-        user = request.form.get("username")
-        hashpw = generate_password_hash(request.form.get("password"), method='pbkdf2:sha256', salt_length=8)
+        username = request.form.get("username")
+        hash = generate_password_hash(request.form.get("password"), method='pbkdf2:sha256', salt_length=8)
         spotify = request.form.get("spotifyuser")
 
         db.execute("INSERT INTO users (username, spotify, hash) VALUES(?,?, ?)", username, spotify ,hash)
