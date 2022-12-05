@@ -8,4 +8,13 @@
     <h2>Username: {{ user }} </h1>
     <h2>Spotify Username: {{ spotify }}</h2>
     <h2> Posts: </h2>
+    {% for row in rows %}
+        <div class="card">
+        <div class="card-header">
+            <img src="{{ row.image }}" width = "50" height = "50" align = "left">
+            {{row.song}}
+            <h4 align = "right"> {{row.post_karma}}</h4>
+        </div>
+        </div>
+    {% endfor %}
    {% endblock %}
