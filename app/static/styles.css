@@ -4,8 +4,16 @@
 }
 
 body {
-    background: rgb(25,20,20);
+    background:rgb(25,20,20);
     background: linear-gradient(90deg, rgba(25,20,20,1) 0%, rgba(29,185,84,1) 100%);
+}
+
+.spot_black {
+    color: #191414;
+}
+
+.spot_green {
+    color: #1DB954;
 }
 
 /* Size for brand */

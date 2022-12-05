@@ -1,4 +1,4 @@
-from flask import Flask, flash, redirect, render_template, request, session
+from flask import Flask, app, render_template, redirect, request, session
 from cs50 import SQL
 from flask_session import Session
 from tempfile import mkdtemp
@@ -10,9 +10,6 @@ import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 
 app = Flask(__name__)
-
-# Configure CS50 Library to use SQLite database
-db = SQL("sqlite:///songchat.db")
 
 #load in key
 with open("gitignore.txt", "r") as keyfile:
@@ -31,46 +28,49 @@ Session(app)
 
 
 
-
-
 @app.route("/register", methods=["GET", "POST"])
 def register():
+    """Register user"""
     if request.method == "POST":
         # Ensure username was submitted
         if not request.form.get("username"):
             return apology("must provide username", 400)
-        # Ensure password and confirm password were submitted
-        elif not request.form.get("password") or not request.form.get("confirmation"):
+
+        # Ensure password was submitted
+        if not request.form.get("password"):
             return apology("must provide password", 400)
 
-        # check password is of sufficient length
-        '''
-        if len(request.form.get("password")) < 8:
-            return apology("password must be 8 characters long", 400)
+        # Ensure confirmation password was submitted
+        if not request.form.get("confirmation"):
+            return apology("must provide confirmation", 400)
 
-        '''
-        # Ensure password and confirm password match
-        if request.form.get("password") != request.form.get("confirmation"):
+        # Ensure confirmation password matches password
+        if request.form.get("confirmation") != request.form.get("password"):
             return apology("passwords must match", 400)
 
-        username = request.form.get("username")
+        # Ensure spotify username was submitted
+        if not request.form.get("spotifyuser"):
+            return apology("must provide Spotify username", 400)
 
-        #retrieve spotify username
-        spotify = request.form.get("spotifyuser")
-
-        #ensure username is unique
+        '''
+        if not len(request.form.get("password")) > 8:
+            return apology("password must be greater than 8 characters")
+        '''
+        
+        #check if username is taken
         rows1 = db.execute("SELECT * FROM users WHERE username = ?", request.form.get("username"))
         if len(rows1) != 0:
             return apology("username taken")
 
-        hash = generate_password_hash(request.form.get("password"), method='pbkdf2:sha256', salt_length=8)
+        user = request.form.get("username")
+        hashpw = generate_password_hash(request.form.get("password"), method='pbkdf2:sha256', salt_length=8)
+        spotify = request.form.get("spotifyuser")
 
         db.execute("INSERT INTO users (username, spotify, hash) VALUES(?,?, ?)", username, spotify ,hash)
 
         return redirect("/")
     else:
         return render_template("register.html")
-
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -95,7 +95,7 @@ def login():
 
         # Ensure username exists and password is correct
         if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
-            return apology("invalid username/password combination", 403)
+            return apology("invalid username and/or password", 403)
 
         # Remember which user has logged in
         session["user_id"] = rows[0]["id"]
@@ -112,6 +112,9 @@ def login():
 def home():
     return render_template("template.html")
 
+@app.route('/profile')
+def profile():
+    return render_template("profile.html")
 
 @app.route('/post', methods=["GET", "POST"])
 def post():
@@ -168,7 +171,6 @@ def logout():
 
     # Redirect user to login form
     return redirect("/")
-
 
 if __name__ == "__main__": #false if this file imported as module
     #enable debugging, auto-restarting of server when this file is modified
