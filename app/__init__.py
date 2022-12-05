@@ -103,7 +103,7 @@ def login():
         print(session["user_id"])
 
         # Redirect user to home page
-        return redirect("/home.html")
+        return redirect("/")
 
     # User reached route via GET (as by clicking a link or via redirect)
     else:
@@ -115,6 +115,10 @@ def home():
 
 @app.route('/profile')
 def profile():
+    # if request.method == "POST":
+    #     username = request.form.get("username")
+    #     content = request.form.get("content")
+    
     return render_template("profile.html")
 
 @app.route('/post', methods=["GET", "POST"])

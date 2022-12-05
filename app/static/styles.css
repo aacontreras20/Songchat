@@ -12,6 +12,10 @@ body {
     font-size: 65px
 }
 
+.bigtext {
+    font-size: 10px
+}
+
 .spot_black {
     color: #191414;
 }
