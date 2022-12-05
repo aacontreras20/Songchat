@@ -4,6 +4,8 @@ from flask_session import Session
 from tempfile import mkdtemp
 from werkzeug.security import check_password_hash, generate_password_hash
 
+from helpers import apology
+
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 
@@ -18,6 +20,7 @@ with open("gitignore.txt", "r") as keyfile:
     secret = keyfile.readline().strip()
 
 
+
 client_credentials_manager = SpotifyClientCredentials(client_id=cid, client_secret=secret)
 sp = spotipy.Spotify(client_credentials_manager = client_credentials_manager)
 
@@ -27,19 +30,6 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 
-try:
-    results = sp.search(q='track:' + name, type='track')
-
-    items = results['tracks']['items']
-
-    if len(items) > 0:
-        track = items[0]
-        url = track['album']['images'][0]['url']
-
-    print(url)
-
-except:
-    print("not a song")
 
 
 
@@ -109,6 +99,7 @@ def login():
 
         # Remember which user has logged in
         session["user_id"] = rows[0]["id"]
+        print(session["user_id"])
 
         # Redirect user to home page
         return redirect("/")
@@ -122,15 +113,61 @@ def home():
     return render_template("template.html")
 
 
-@app.route('/post')
+@app.route('/post', methods=["GET", "POST"])
 def post():
-    return render_template("feed.html")
+    if request.method == "POST":
+        song = request.form.get("song")
+        content = request.form.get("content")
+
+        try:
+            results = sp.search(q='track:' + song, type='track')
+            items = results['tracks']['items']
+            if len(items) > 0:
+                track = items[0]
+                name = track['name']
+        except:
+            return apology("not a valid song", 403)
+
+        db.execute("INSERT INTO posts (user_id, song, content) VALUES(?,?,?)", session["user_id"], name , content)
+
+        return redirect("/")
+    else:
+        return render_template("post.html")
 
 
 @app.route('/feed')
 def feed():
-    return render_template("feed.html")
+    #generates sorted feed of posts 
+    #Next steps: Make it so that not all the posts show up/load in the data beforehand
+    
+    rows = db.execute("SELECT * FROM posts ORDER BY post_karma")
 
+    for row in rows:
+
+        results = sp.search(q='track:' + row["song"], type='track')
+
+        items = results['tracks']['items']
+        if len(items) > 0:
+            track = items[0]
+            url = track['album']['images'][0]['url']
+
+        row["image"] = url
+        
+    print(rows)
+    
+
+    return render_template("feed.html", rows = rows)
+
+
+@app.route("/logout")
+def logout():
+    """Log user out"""
+
+    # Forget any user_id
+    session.clear()
+
+    # Redirect user to login form
+    return redirect("/")
 
 
 if __name__ == "__main__": #false if this file imported as module

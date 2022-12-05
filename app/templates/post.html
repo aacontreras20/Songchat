@@ -1,1 +1,17 @@
-{{ url }}
+{% extends "template.html" %}
+
+{% block title %}
+    Post
+{% endblock %}
+
+{% block main %}
+    <form action="/post" method="post">
+        <div class="mb-3">
+            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="song" name="song" placeholder="song" type="text">
+        </div>
+        <div class="mb-3">
+            <textarea class="form-control" id="content" name="content" placeholder = "write comment here" rows="3"></textarea>
+        </div>
+        <button class="btn btn-primary" type="submit">Post</button>
+    </form>
+{% endblock %}
