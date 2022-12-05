@@ -128,6 +128,9 @@ def login():
 def home():
     return render_template("template.html")
 
+@app.route('/profile')
+def profile():
+    return render_template("profile.html")
 
 @app.route('/post')
 def post():
