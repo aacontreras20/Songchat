@@ -138,7 +138,7 @@ def post():
 
         db.execute("INSERT INTO posts (user_id, song, content) VALUES(?,?,?)", session["user_id"], name , content)
 
-        return redirect("/home.html")
+        return redirect("/")
     else:
         return render_template("post.html")
 
