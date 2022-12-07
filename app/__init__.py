@@ -113,12 +113,14 @@ def login():
 def home():
     return render_template("home.html")
 
-@app.route('/profile')
+@app.route('/profile', methods=["GET","POST"])
 def profile():
     # if request.method == "POST":
     #     username = request.form.get("username")
-    #     content = request.form.get("content")
-    
+    #     spotify = request.form.get("spotify")
+    # print(username)
+    # print(spotify)
+    # return render_template("profile.html", username = username, spotify = spotify)
     return render_template("profile.html")
 
 @app.route('/post', methods=["GET", "POST"])
