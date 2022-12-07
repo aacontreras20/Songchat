@@ -27,8 +27,7 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
-
-
+#Define register, throw appropriate errors if certain fields not filled in 
 @app.route("/register", methods=["GET", "POST"])
 def register():
     """Register user"""
@@ -67,6 +66,7 @@ def register():
         hash = generate_password_hash(request.form.get("password"), method='pbkdf2:sha256', salt_length=8)
         spotify = request.form.get("spotifyuser")
 
+        # Enter user info into users table in database
         db.execute("INSERT INTO users (username, spotify, hash) VALUES(?,?, ?)", username, spotify ,hash)
 
         return redirect("/login")
@@ -109,19 +109,25 @@ def login():
     else:
         return render_template("login.html")
 
+# Define route to home page
 @app.route('/')
 def home():
     return render_template("home.html")
 
+# Define profile function
 @app.route('/profile', methods=["GET","POST"])
 def profile():
+    # Select rows in which user_id matches current logged in user
     user_rows = db.execute("SELECT * FROM users WHERE id = ?", session["user_id"])
 
+    # Pull username and spotify username from database for currently logged in user
     username = user_rows[0]["username"]
     spotify = user_rows[0]["spotify"]
 
+    # Select user's posts from posts table
     post_rows = db.execute("SELECT * FROM posts WHERE user_id = ?", session["user_id"])
 
+    # Pull the posts by the user and display them on the profile page with appropriate artist image and information
     for post_row in post_rows:
 
         results = sp.search(q='track:' + post_row["song"], type='track')
@@ -135,19 +141,22 @@ def profile():
         
     return render_template("profile.html", rows = post_rows, username = username, spotify = spotify)
 
+# Define post function for the page
 @app.route('/post', methods=["GET", "POST"])
 def post():
+    # Ensure that song is provided in text field
     if request.method == "POST":
         if not request.form.get("song"):
             return apology("must provide song", 400)
-
+        # Ensure that comment is provided in comment field
         if not request.form.get("content"):
             return apology("please write a comment", 400)
 
-
+    # Pull song and content for comment
         song = request.form.get("song")
         content = request.form.get("content")
 
+    # Pull Spotify information for image and song name referenced
         try:
             results = sp.search(q='track:' + song, type='track')
             items = results['tracks']['items']
@@ -157,6 +166,7 @@ def post():
         except:
             return apology("not a valid song", 403)
 
+    # Add post to posts table
         db.execute("INSERT INTO posts (user_id, song, content) VALUES(?,?,?)", session["user_id"], name , content)
 
         return redirect("/")
@@ -169,6 +179,7 @@ def feed():
     #generates sorted feed of posts 
     #Next steps: Make it so that not all the posts show up/load in the data beforehand
     
+    # Sorts by karma points, which weren't implemented due to time constraint
     rows = db.execute("SELECT * FROM posts ORDER BY post_karma")
 
     for row in rows:
@@ -182,8 +193,6 @@ def feed():
 
         row["image"] = url
     
-    
-
     return render_template("feed.html", rows = rows)
 
 

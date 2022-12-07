@@ -5,7 +5,7 @@ import urllib.parse
 from flask import redirect, render_template, request, session
 from functools import wraps
 
-
+# Define apology function to throw the Rick Roll gif if error pops up
 def apology(message, code=400):
     """Render message as an apology to user."""
     def escape(s):
@@ -19,7 +19,7 @@ def apology(message, code=400):
         return s
     return render_template("apology.html", top=code, bottom=escape(message)), code
 
-
+# Define login_required function for pages like feed, profile, and post
 def login_required(f):
     """
     Decorate routes to require login.

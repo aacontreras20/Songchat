@@ -6,7 +6,7 @@ Feed
 
 {% block main %}
 
-
+      <!--Loop through posts table to pull each post's song's image and song title, as well as the comment included in the post-->
       {% for row in rows %}
         <div class="card">
         <div class="card-header">
@@ -16,6 +16,7 @@ Feed
         </div>
         <div class="card-body">
             <h5 class="card-title">{{ row.content }}</h5>
+            <!-- Display upvote and downvote, though the karma function was not implemented due to time constraint -->
             <a href="#" class="btn btn-primary">Upvote</a>
             <a href="#" class="btn btn-danger">Downvote</a>
         </div>
