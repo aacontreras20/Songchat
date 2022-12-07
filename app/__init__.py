@@ -115,17 +115,36 @@ def home():
 
 @app.route('/profile', methods=["GET","POST"])
 def profile():
-    # if request.method == "POST":
-    #     username = request.form.get("username")
-    #     spotify = request.form.get("spotify")
-    # print(username)
-    # print(spotify)
-    # return render_template("profile.html", username = username, spotify = spotify)
-    return render_template("profile.html")
+    user_rows = db.execute("SELECT * FROM users WHERE id = ?", session["user_id"])
+
+    username = user_rows[0]["username"]
+    spotify = user_rows[0]["spotify"]
+
+    post_rows = db.execute("SELECT * FROM posts WHERE user_id = ?", session["user_id"])
+
+    for post_row in post_rows:
+
+        results = sp.search(q='track:' + post_row["song"], type='track')
+
+        items = results['tracks']['items']
+        if len(items) > 0:
+            track = items[0]
+            url = track['album']['images'][0]['url']
+
+        post_row["image"] = url
+        
+    return render_template("profile.html", rows = post_rows, username = username, spotify = spotify)
 
 @app.route('/post', methods=["GET", "POST"])
 def post():
     if request.method == "POST":
+        if not request.form.get("song"):
+            return apology("must provide song", 400)
+
+        if not request.form.get("content"):
+            return apology("please write a comment", 400)
+
+
         song = request.form.get("song")
         content = request.form.get("content")
 
@@ -162,8 +181,7 @@ def feed():
             url = track['album']['images'][0]['url']
 
         row["image"] = url
-        
-    print(rows)
+    
     
 
     return render_template("feed.html", rows = rows)
