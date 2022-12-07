@@ -5,14 +5,14 @@
 {% endblock %}
 
 {% block main %}
-    <h2>Username: {{ user }} </h1>
+    <h2>Username: {{ username }} </h1>
     <h2>Spotify Username: {{ spotify }}</h2>
     <h2> Posts: </h2>
     {% for row in rows %}
         <div class="card">
         <div class="card-header">
             <img src="{{ row.image }}" width = "60" height = "60" align = "left">
-            <div class="bigtext">{{row.song}}</div>
+            <h4>{{row.song}}</h4>
             <h4 align = "right"> {{row.post_karma}}</h4>
         </div>
         <div class="card-body">
